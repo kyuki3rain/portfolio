@@ -4,6 +4,8 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHeight } from "../states/height";
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/input";
 
 export const schema = z.object({
   height: z.number().min(1).max(10),
@@ -15,7 +17,7 @@ export default function Form() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<Type>({
     resolver: zodResolver(schema),
   });
@@ -26,18 +28,21 @@ export default function Form() {
         console.log(data);
         setHeight(data.height);
       })}
-      className="flex justify-center w-1/2 bg-gray-200 p-5 mt-5"
+      className="flex justify-around my-5"
     >
-      <label htmlFor="hanoi-height">高さ</label>
-      <input
-        id="hanoi-height"
+      <Input
         type="number"
-        defaultValue={3}
-        {...register("height", { required: true, valueAsNumber: true })}
+        label="height"
+        placeholder="height"
+        {...register("height", {
+          required: "This is required",
+          valueAsNumber: true,
+        })}
+        errorMessage={errors.height && errors.height.message}
       />
-      {errors.height && <span>{errors.height.message}</span>}
-
-      <button type="submit">送信</button>
+      <Button isLoading={isSubmitting} type="submit" className="m-2">
+        決定
+      </Button>
     </form>
   );
 }

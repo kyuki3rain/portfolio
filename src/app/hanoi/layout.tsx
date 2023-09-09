@@ -1,6 +1,4 @@
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import { Providers } from "./Providers";
 
 export const metadata = {
   title: "Create Next App",
@@ -9,8 +7,10 @@ export const metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="dark">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 };
