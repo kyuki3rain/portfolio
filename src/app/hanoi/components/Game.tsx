@@ -7,6 +7,14 @@ import { Button } from "@nextui-org/button";
 import RedoIcon from "../icons/RedoIcon";
 import UndoIcon from "../icons/UndoIcon";
 
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+
 type Props = {
   height: number;
 };
@@ -19,6 +27,7 @@ type State = {
 export type TowerType = keyof State;
 
 function GameView({ height }: Props) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [state, setState] = useState({
     a: Array.from({ length: height }, (_, i) => height - i - 1),
     b: [] as number[],
@@ -27,6 +36,7 @@ function GameView({ height }: Props) {
   const [logs, setLogs] = useState<{ from: TowerType; to: TowerType }[]>([]);
   const [index, setIndex] = useState(0);
   const [from, setFrom] = useState<TowerType | null>(null);
+  const [clear, setClear] = useState(false);
 
   const move = useCallback(
     (from: TowerType, to: TowerType, logging: boolean = true) => {
@@ -45,8 +55,13 @@ function GameView({ height }: Props) {
         setLogs([...logs.slice(0, index), { from, to }]);
         setIndex(index + 1);
       }
+
+      if (to !== "a" && toState.length === height) {
+        setClear(true);
+        onOpen();
+      }
     },
-    [state, logs, index]
+    [state, height, logs, index, onOpen]
   );
 
   const undo = useCallback(() => {
@@ -56,6 +71,7 @@ function GameView({ height }: Props) {
     move(log.to, log.from, false);
     setIndex(index - 1);
     setFrom(null);
+    setClear(false);
   }, [index, logs, move]);
 
   const redo = useCallback(() => {
@@ -76,10 +92,13 @@ function GameView({ height }: Props) {
     setLogs([]);
     setIndex(0);
     setFrom(null);
+    setClear(false);
   }, [height]);
 
   const onClick = useCallback(
     (tower: TowerType) => {
+      if (clear === true) return;
+
       if (from === null) {
         setFrom(tower);
       } else {
@@ -87,7 +106,7 @@ function GameView({ height }: Props) {
         setFrom(null);
       }
     },
-    [from, move]
+    [clear, from, move]
   );
 
   return (
@@ -141,6 +160,32 @@ function GameView({ height }: Props) {
           リセット
         </Button>
       </div>
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <p>Clear!</p>
+              </ModalHeader>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    onClose();
+                    reset();
+                  }}
+                >
+                  Reset
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
