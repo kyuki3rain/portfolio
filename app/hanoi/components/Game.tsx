@@ -116,18 +116,21 @@ function GameView({ height }: Props) {
           type="a"
           floors={state.a}
           onClick={() => onClick("a")}
+          focus={from === "a"}
           className="bg-red-100"
         ></Tower>
         <Tower
           type="b"
           floors={state.b}
           onClick={() => onClick("b")}
+          focus={from === "b"}
           className="bg-green-100"
         ></Tower>
         <Tower
           type="c"
           floors={state.c}
           onClick={() => onClick("c")}
+          focus={from === "c"}
           className="bg-blue-100"
         ></Tower>
       </div>
