@@ -34,6 +34,11 @@ function GameView({ height }: Props) {
       const toState = state[to];
       if (fromState.length === 0) return;
 
+      const fromTop = fromState[fromState.length - 1];
+      if (fromTop === undefined) return;
+      const toTop = toState[toState.length - 1];
+      if (toTop !== undefined && fromTop > toTop) return;
+
       toState.push(fromState.pop()!);
       setState({ ...state, [from]: fromState, [to]: toState });
       if (logging === true) {
@@ -50,6 +55,7 @@ function GameView({ height }: Props) {
     const log = logs[index - 1];
     move(log.to, log.from, false);
     setIndex(index - 1);
+    setFrom(null);
   }, [index, logs, move]);
 
   const redo = useCallback(() => {
@@ -58,7 +64,19 @@ function GameView({ height }: Props) {
     const log = logs[index];
     move(log.from, log.to, false);
     setIndex(index + 1);
+    setFrom(null);
   }, [index, logs, move]);
+
+  const reset = useCallback(() => {
+    setState({
+      a: Array.from({ length: height }, (_, i) => height - i - 1),
+      b: [] as number[],
+      c: [] as number[],
+    });
+    setLogs([]);
+    setIndex(0);
+    setFrom(null);
+  }, [height]);
 
   const onClick = useCallback(
     (tower: TowerType) => {
@@ -113,6 +131,14 @@ function GameView({ height }: Props) {
           onClick={redo}
         >
           <RedoIcon />
+        </Button>
+        <Button
+          color="danger"
+          aria-label="Like"
+          className="mx-4"
+          onClick={reset}
+        >
+          リセット
         </Button>
       </div>
     </div>
