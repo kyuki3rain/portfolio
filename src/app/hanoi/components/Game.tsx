@@ -22,6 +22,7 @@ function GameView({ height }: Props) {
     c: [] as number[],
   });
   const [from, setFrom] = useState<TowerType | null>(null);
+  const [count, setCount] = useState(0);
 
   const move = (from: TowerType, to: TowerType) => {
     const fromState = state[from];
@@ -30,6 +31,7 @@ function GameView({ height }: Props) {
 
     toState.push(fromState.pop()!);
     setState({ ...state, [from]: fromState, [to]: toState });
+    setCount(count + 1);
   };
 
   const onClick = (tower: TowerType) => {
@@ -42,25 +44,28 @@ function GameView({ height }: Props) {
   };
 
   return (
-    <div className="flex justify-around w-screen p-10">
-      <Tower
-        type="a"
-        floors={state.a}
-        onClick={() => onClick("a")}
-        className="bg-red-100"
-      ></Tower>
-      <Tower
-        type="b"
-        floors={state.b}
-        onClick={() => onClick("b")}
-        className="bg-green-100"
-      ></Tower>
-      <Tower
-        type="c"
-        floors={state.c}
-        onClick={() => onClick("c")}
-        className="bg-blue-100"
-      ></Tower>
+    <div className="flex flex-col items-center">
+      <div className="flex justify-around w-screen p-10">
+        <Tower
+          type="a"
+          floors={state.a}
+          onClick={() => onClick("a")}
+          className="bg-red-100"
+        ></Tower>
+        <Tower
+          type="b"
+          floors={state.b}
+          onClick={() => onClick("b")}
+          className="bg-green-100"
+        ></Tower>
+        <Tower
+          type="c"
+          floors={state.c}
+          onClick={() => onClick("c")}
+          className="bg-blue-100"
+        ></Tower>
+      </div>
+      <div className="text-4xl">Count: {count}</div>
     </div>
   );
 }
