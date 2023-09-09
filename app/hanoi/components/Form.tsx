@@ -34,6 +34,7 @@ export default function Form() {
         type="number"
         label="height"
         placeholder="height"
+        defaultValue="3"
         {...register("height", {
           required: "This is required",
           valueAsNumber: true,
