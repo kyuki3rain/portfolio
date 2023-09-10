@@ -6,14 +6,15 @@ import Tower from "./Tower";
 import { Button } from "@nextui-org/button";
 import RedoIcon from "../icons/RedoIcon";
 import UndoIcon from "../icons/UndoIcon";
-
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalFooter,
   useDisclosure,
+  ModalBody,
 } from "@nextui-org/react";
+import { useTimer } from "../hooks/useTimer";
 
 type Props = {
   height: number;
@@ -38,6 +39,14 @@ function GameView({ height }: Props) {
   const [from, setFrom] = useState<TowerType | null>(null);
   const [clear, setClear] = useState(false);
 
+  const {
+    timeString,
+    enabled: timerEnabled,
+    reset: timerReset,
+    start: timerStart,
+    stop: timerStop,
+  } = useTimer();
+
   const move = useCallback(
     (from: TowerType, to: TowerType, logging: boolean = true) => {
       const fromState = state[from];
@@ -49,6 +58,8 @@ function GameView({ height }: Props) {
       const toTop = toState[toState.length - 1];
       if (toTop !== undefined && fromTop > toTop) return;
 
+      if (timerEnabled === false) timerStart();
+
       toState.push(fromState.pop()!);
       setState({ ...state, [from]: fromState, [to]: toState });
       if (logging === true) {
@@ -58,10 +69,11 @@ function GameView({ height }: Props) {
 
       if (to !== "a" && toState.length === height) {
         setClear(true);
+        timerStop();
         onOpen();
       }
     },
-    [state, height, logs, index, onOpen]
+    [state, timerEnabled, timerStart, height, logs, index, timerStop, onOpen]
   );
 
   const undo = useCallback(() => {
@@ -93,7 +105,8 @@ function GameView({ height }: Props) {
     setIndex(0);
     setFrom(null);
     setClear(false);
-  }, [height]);
+    timerReset();
+  }, [height, timerReset]);
 
   const onClick = useCallback(
     (tower: TowerType) => {
@@ -134,34 +147,39 @@ function GameView({ height }: Props) {
           className="bg-blue-100"
         ></Tower>
       </div>
-      <div className="flex flex-row">
-        <Button
-          isIconOnly
-          color="danger"
-          aria-label="Like"
-          className="mx-4"
-          onClick={undo}
-        >
-          <UndoIcon />
-        </Button>
-        <div className="text-4xl">Count: {index}</div>
-        <Button
-          isIconOnly
-          color="danger"
-          aria-label="Like"
-          className="mx-4"
-          onClick={redo}
-        >
-          <RedoIcon />
-        </Button>
-        <Button
-          color="danger"
-          aria-label="Like"
-          className="mx-4"
-          onClick={reset}
-        >
-          リセット
-        </Button>
+      <div className="flex flex-row w-screen justify-around">
+        <div className="flex flex-row">
+          <div className="text-4xl">Time: {timeString}</div>
+        </div>
+        <div className="flex flex-row">
+          <Button
+            isIconOnly
+            color="danger"
+            aria-label="Like"
+            className="mx-4"
+            onClick={undo}
+          >
+            <UndoIcon />
+          </Button>
+          <div className="text-4xl">Count: {index}</div>
+          <Button
+            isIconOnly
+            color="danger"
+            aria-label="Like"
+            className="mx-4"
+            onClick={redo}
+          >
+            <RedoIcon />
+          </Button>
+          <Button
+            color="danger"
+            aria-label="Like"
+            className="mx-4"
+            onClick={reset}
+          >
+            リセット
+          </Button>
+        </div>
       </div>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -171,6 +189,12 @@ function GameView({ height }: Props) {
               <ModalHeader className="flex flex-col gap-1">
                 <p>Clear!</p>
               </ModalHeader>
+              <ModalBody>
+                <div className="flex flex-col gap-1">
+                  <p>Time: {timeString}</p>
+                  <p>Count: {index}</p>
+                </div>
+              </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
