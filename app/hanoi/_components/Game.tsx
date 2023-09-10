@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useHeight } from "../states/height";
+import { useHeight } from "../_states/height";
 import Tower from "./Tower";
 import { Button } from "@nextui-org/button";
-import RedoIcon from "../icons/RedoIcon";
-import UndoIcon from "../icons/UndoIcon";
+import RedoIcon from "../_icons/RedoIcon";
+import UndoIcon from "../_icons/UndoIcon";
 import {
   Modal,
   ModalContent,
@@ -14,7 +14,7 @@ import {
   useDisclosure,
   ModalBody,
 } from "@nextui-org/react";
-import { useTimer } from "../hooks/useTimer";
+import { useTimer } from "../_hooks/useTimer";
 
 type Props = {
   height: number;

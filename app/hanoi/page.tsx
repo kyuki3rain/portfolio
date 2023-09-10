@@ -1,5 +1,5 @@
-import HanoiForm from "./components/Form";
-import Game from "./components/Game";
+import HanoiForm from "./_components/Form";
+import Game from "./_components/Game";
 
 export default function Hanoi() {
   return (
