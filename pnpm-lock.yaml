@@ -50,6 +50,9 @@ dependencies:
   postcss:
     specifier: 8.4.29
     version: 8.4.29
+  prisma:
+    specifier: ^5.5.2
+    version: 5.5.2
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -76,9 +79,6 @@ devDependencies:
   dotenv-cli:
     specifier: ^7.3.0
     version: 7.3.0
-  prisma:
-    specifier: ^5.5.2
-    version: 5.5.2
 
 packages:
 
@@ -1508,6 +1508,7 @@ packages:
   /@prisma/engines@5.5.2:
     resolution: {integrity: sha512-Be5hoNF8k+lkB3uEMiCHbhbfF6aj1GnrTBnn5iYFT7GEr3TsOEp1soviEcBR0tYCgHbxjcIxJMhdbvxALJhAqg==}
     requiresBuild: true
+    dev: false
 
   /@react-aria/accordion@3.0.0-alpha.20(react@18.2.0):
     resolution: {integrity: sha512-dQIrZrUwfVIezny/7SknsxIeZ5R4VXMizuCC6XCTDgeu7Mx8O3/+quJwE58KAHT9mhvWx7Wk+QGNBOTNbwSXQQ==}
@@ -4414,6 +4415,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 5.5.2
+    dev: false
 
   /prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
