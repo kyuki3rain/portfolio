@@ -14,7 +14,7 @@ import {
   useDisclosure,
   ModalBody,
 } from "@nextui-org/react";
-import { useTimer } from "../_hooks/useTimer";
+import { useTimer } from "../../../utils/hooks/useTimer";
 
 type Props = {
   height: number;
