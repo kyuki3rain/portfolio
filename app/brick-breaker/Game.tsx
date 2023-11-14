@@ -45,10 +45,10 @@ const genBlocks = () => {
 };
 
 function Game() {
-  const { status, resume } = useStatus();
-  const { key } = useKey();
+  const { status, resume, clear } = useStatus();
+  const { keys } = useKey();
   const reset = useMemo(() => status === "reset", [status]);
-  const playing = useMemo(() => status === "playing", [status]);
+  const isPlaying = useMemo(() => status === "playing", [status]);
 
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 50 });
   const [ballVelocity, setBallVelocity] = useState({ x: 1, y: 1 });
@@ -67,8 +67,15 @@ function Game() {
     resume();
   }, [resume, reset]);
 
+  // クリア判定
   useEffect(() => {
-    if (!playing) return;
+    if (blocks.length === 0) {
+      clear();
+    }
+  }, [blocks.length, clear]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
 
     const interval = setInterval(() => {
       setBallPosition((ballPosition) => ({
@@ -77,7 +84,7 @@ function Game() {
       }));
     }, 30);
     return () => clearInterval(interval);
-  }, [ballVelocity, playing]);
+  }, [ballVelocity, isPlaying]);
 
   useEffect(() => {
     if (
@@ -177,25 +184,36 @@ function Game() {
   }, [ballPosition, controller]);
 
   useEffect(() => {
-    if (key === "ArrowRight") {
+    if (keys.length === 0) return;
+
+    if (keys[0] === "ArrowRight") {
       const interval = setInterval(() => {
-        setController((controller) => ({
-          x: controller.x + 1,
-          y: controller.y,
-        }));
+        setController((controller) => {
+          if (controller.x >= AREA_SIZE.width - CONTROLLER_SIZE.width)
+            return controller;
+
+          return {
+            x: controller.x + 1,
+            y: controller.y,
+          };
+        });
       }, 10);
       return () => clearInterval(interval);
     }
-    if (key === "ArrowLeft") {
+    if (keys[0] === "ArrowLeft") {
       const interval = setInterval(() => {
-        setController((controller) => ({
-          x: controller.x - 1,
-          y: controller.y,
-        }));
+        setController((controller) => {
+          if (controller.x <= 0) return controller;
+
+          return {
+            x: controller.x - 1,
+            y: controller.y,
+          };
+        });
       }, 10);
       return () => clearInterval(interval);
     }
-  }, [key]);
+  }, [keys]);
 
   return (
     <svg
