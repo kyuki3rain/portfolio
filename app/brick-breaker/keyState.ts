@@ -1,11 +1,13 @@
 import { create } from "zustand";
 
 type Store = {
-    key: string;
+    keys: string[];
     setKey: (key: string) => void;
+    removeKey: (key: string) => void;
 }
 
 export const useKey = create<Store>((set) => ({
-    key: "",
-    setKey: (key) => set({ key }),
+    keys: [],
+    setKey: (key) => set((state) => ({ keys: [...state.keys, key] })),
+    removeKey: (key) => set((state) => ({ keys: state.keys.filter((k) => k !== key) })),
 }));
