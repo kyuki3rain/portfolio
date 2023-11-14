@@ -1,4 +1,10 @@
-import { Modal, Button, ModalContent, ModalBody } from "@nextui-org/react";
+import {
+  Modal,
+  Button,
+  ModalContent,
+  ModalBody,
+  ModalHeader,
+} from "@nextui-org/react";
 import { useStatus } from "./statusState";
 import { useMemo } from "react";
 
@@ -9,6 +15,7 @@ function MyModal() {
   return (
     <Modal isOpen={isOpen} onOpenChange={resume}>
       <ModalContent>
+        <ModalHeader>Pause</ModalHeader>
         <ModalBody>
           <Button onClick={resume}>Resume</Button>
           <Button onClick={reset}>Reset</Button>

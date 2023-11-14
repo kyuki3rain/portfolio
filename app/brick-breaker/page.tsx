@@ -1,37 +1,40 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import Game from "./Game";
 import Modal from "./Modal";
 import { useStatus } from "./statusState";
 import { useKey } from "./keyState";
 
 function App() {
-  const { isPlaying, pause, resume, status } = useStatus();
+  const { getStatus, pause, resume, status } = useStatus();
   const { key, setKey } = useKey();
+  const isPlaying = useMemo(() => status === "playing", [status]);
+  const keyIsEscape = useMemo(() => key === "Escape", [key]);
+
+  const keyPressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (key === "Escape") {
-      if (isPlaying()) pause();
+    if (keyIsEscape) {
+      if (getStatus() === "playing") pause();
       else resume();
-      return;
     }
-  }, [key, pause, resume, isPlaying]);
+  }, [keyIsEscape, pause, resume, getStatus]);
+
+  useEffect(() => {
+    if (isPlaying && keyPressRef.current) keyPressRef.current.focus();
+  }, [isPlaying]);
 
   const onKeydown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!isPlaying()) return;
-
-      setKey(e.key);
+      if (getStatus() === "playing") setKey(e.key);
     },
-    [isPlaying, setKey]
+    [getStatus, setKey]
   );
 
   const onKeyUp = useCallback(() => {
-    if (!isPlaying()) return;
-
-    setKey("");
-  }, [isPlaying, setKey]);
+    if (getStatus() === "playing") setKey("");
+  }, [getStatus, setKey]);
 
   return (
     <div
@@ -46,9 +49,10 @@ function App() {
       tabIndex={0}
       onKeyDown={onKeydown}
       onKeyUp={onKeyUp}
+      ref={keyPressRef}
     >
       <Game />
-      {status !== "playing" && <Modal />}
+      {!isPlaying && <Modal />}
     </div>
   );
 }
